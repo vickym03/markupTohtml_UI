@@ -17,7 +17,7 @@
 
    - **For the front-end**:
      ```bash
-     cd frontend
+     cd markupTohtml_UI
      npm install
      ```
 
@@ -28,7 +28,7 @@ PORT:3000
 1. Navigate to the front-end directory:
 
    ```bash
-   cd frontend
+   cd markupTohtml_UI
    ```
 
 2. Install front-end dependencies:
@@ -45,7 +45,7 @@ PORT:3000
 
 ## Running the Application
 
-- **Front-end**: Make sure to run `npm start` from the `frontend` directory.
+- **Front-end**: Make sure to run `npm start` from the `markupTohtml_UI` directory.
 
 After running both servers, your full-stack application should be up and running. The front-end will communicate with the back-end through API calls.
 
