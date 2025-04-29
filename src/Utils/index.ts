@@ -1,62 +1,37 @@
-export const debounce = (func: Function, delay: number) => {
-  let timeout: ReturnType<typeof setTimeout>;
+import { belowTwenty, tens, units } from "../data";
 
-  const debouncedFunction = (...args: any[]) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), delay);
-  };
+export const numberToWordsInRupees = (num: number): string => {
+  console.log(num);
+  if (num === 0) return "Zero Rupees Only";
 
-  debouncedFunction.cancel = () => {
-    clearTimeout(timeout);
-  };
+  function helper(n: number): string {
+    if (n < 20) return belowTwenty[n];
+    if (n < 100)
+      return (
+        tens[Math.floor(n / 10)] +
+        (n % 10 !== 0 ? " " + belowTwenty[n % 10] : "")
+      );
+    return (
+      belowTwenty[Math.floor(n / 100)] +
+      " Hundred" +
+      (n % 100 !== 0 ? " " + helper(n % 100) : "")
+    );
+  }
 
-  return debouncedFunction as typeof debouncedFunction & { cancel: () => void };
+  let word = "";
+  let i = 0;
+
+  while (num > 0) {
+    const chunk = i === 0 ? num % 1000 : num % 100;
+    if (chunk !== 0) {
+      word =
+        helper(chunk) +
+        (units[i] ? " " + units[i] : "") +
+        (word ? " " + word : "");
+    }
+    num = i === 0 ? Math.floor(num / 1000) : Math.floor(num / 100);
+    i++;
+  }
+
+  return word + " Rupees Only";
 };
-
-export const getId = () => sessionStorage.getItem("sessionId");
-
-export function validateTags(text: string): string[] {
-  const errors: string[] = [];
-
-  const addError = (message: string) => errors.push(message);
-
-  switch (true) {
-    case /[^a-zA-Z0-9\s\*\+\-\.\_\#\(\)\[\]\{\}\!\/\`\~\&\%\=\:;\"\,\.\'\-]/.test(
-      text
-    ):
-      addError(
-        "Text contains invalid characters that are not allowed in Markdown."
-      );
-      break;
-  }
-
-  switch (true) {
-    case /(^|\n)(#{1,6})(?!\s).+/g.test(text):
-      addError("Headings must start with # followed by a space and text.");
-      break;
-  }
-
-  switch (true) {
-    case !/(\*\*.+\*\*|__.+__|\*.+\*|_.+_)/g.test(text):
-      addError("Text formatting (bold/italic) should use *, **, _, or __.");
-      break;
-  }
-
-  switch (true) {
-    case /(^|\n)(-|\+|\*)(?!\s).+/g.test(text):
-      addError(
-        "List items must start with -, +, or * followed by a space and text."
-      );
-      break;
-  }
-
-  switch (true) {
-    case /(^|\n)\d+\.(?!\s).+/g.test(text):
-      addError(
-        "Ordered list items must start with a number followed by a period and a space."
-      );
-      break;
-  }
-
-  return errors;
-}
